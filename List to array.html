@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>List to array</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style>
+        html, body{
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: stretch;
+        }
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+<div class="container mt-5">
+	<div class="row">
+		<div class="col-12">
+			<h4>Input text:</h4>
+		</div>
+		<div class="col-12">
+			<textarea id="input-list" class="form-control"  style="height: 400px">		1. How can we formalize the logic defined at country level and from different expertises to be reusable, flexible and machine readable?
+			i. How can we use this logic to provide better data presentation?
+		2. How can we improve our projections by using modelling to strengthen our assumptions?
+			i. How can we compare different possible scenarios instead of looking at the "the most likely" one?
+			ii. How we can monitor the validity of our projections by monitoring the assumptions/risk factors?
+What can we learn from performing data analysis on previous analyses? </textarea>
+		</div>
+		<div class="col-12">
+			<h4 class="mt-5">Array output:</h4>
+		</div>
+		<div class="col-12">
+			<textarea id="output" class="form-control" style="height: 400px"></textarea>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+	$("#input-list").change(() => {
+		let lines = $("#input-list").val().split("\n");
+		let items = [];
+		let matches = [];
+		let oldIndex = 0, index = 0;
+		let indent, oldIndent;
+		let res = ""
+		lines.forEach(l =>  {
+			// let re = RegExp(`(\\t+)[§□\\-○]{1,2} (.*)`);
+			let re = RegExp(`(\\t+)([§□\\-○]|[\\w\\d]{1,2}\.) (.*)`);
+			let match = l.match(re);
+			console.log(match);
+			if(match) {
+				index = match[1].length;
+				console.log(oldIndex, index)
+				indent = Array(index).join("\t");
+				oldIndent = Array(oldIndex).join("\t");
+				if(index > oldIndex){
+					res = res + indent + "\[\n"
+				}
+				if(index < oldIndex) {
+					res = res + oldIndent + "\],\n"
+				}
+				res = res + indent + `\t"${match[3]}",\n`
+				oldIndex = index;
+			}
+			else {
+				res = res + `\n${l}\n`
+			}
+		});
+		res = res + oldIndent + "]\n"
+
+		$("#output").val(`${res}]`)
+
+		// const re = /\t\t[\w\d]{1,2}\. (.*)/g;
+		// let matches = [...$("#input-list").val().matchAll(re)];
+		// console.log(matches)
+		// matches.forEach((match) => {
+		// 	console.log(match[1])
+		// })
+		// let items = matches.map(m => `\t\\item ${m[1]}`).join("\n")
+		// $("#output").val(`\\begin{enumerate}\n${items}\\end{enumerate}
+		// `)
+	});
+</script>
+</html>

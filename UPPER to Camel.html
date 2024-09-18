@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>UPPER to Camel</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style>
+        html, body{
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            align-items: stretch;
+        }
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+<body>
+<div class="container mt-5">
+	<div class="row">
+		<div class="col-12">
+			<h4>Input text UPPER:</h4>
+		</div>
+		<div class="col-12">
+			<textarea id="input" class="form-control"  style="height: 400px">TACKLING THE GLOBAL HUMANITARIAN FUNDING GAP</textarea>
+		</div>
+		<div class="col-12">
+			<h4 class="mt-5">Camel output:</h4>
+		</div>
+		<div class="col-12">
+			<textarea id="output" class="form-control" style="height: 400px"></textarea>
+		</div>
+	</div>
+</div>
+</body>
+<script>
+	$("#input").change(() => {
+		let text = $("#input").val();
+		text = text.toLowerCase();
+		text = text.replace(/(\w)(\w*)/g, (match, p1, p2) => p1.toUpperCase()+p2)
+		$("#output").val(text);
+	})
+</script>
+</html>
