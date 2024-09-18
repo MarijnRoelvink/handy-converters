@@ -67,7 +67,7 @@
 	$("#run").click(() => {
 		let input = new ONInput($("#input-list").val());
 		console.log(input.mf);
-		input.mf.print();
+		$("#output").val(input.mf.toLines().join("\n"));
 	})
 
 	// $("#input-list").change(() => {

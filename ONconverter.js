@@ -14,26 +14,25 @@ class ONInput {
 		while (lines.length > 0) {
 			let l = lines[0];
 			let match = l.match(this.re);
-			if(match) {
+			if (match) {
 				let index = match[1].length;
-				if(mf.bullet() === "") {
+				if (mf.bullet() === "") {
 					mf.setBullet(match[2]);
 				}
-				if(index === currIndex) {
+				if (index === currIndex) {
 					lines.shift();
 					mf.push(match[3]);
 				}
 				// New sublist encountered
-				if(index > currIndex) {
+				if (index > currIndex) {
 					mf.addSubList(this.parse(lines, index));
 				}
 				//List has ended
-				if(index < currIndex) {
+				if (index < currIndex) {
 					mf.resetArr();
 					return mf;
 				}
-			}
-			else {
+			} else {
 				mf.addNonListItem(lines.shift());
 			}
 		}
@@ -48,26 +47,36 @@ class MachineFormat {
 		this.arr = {bullet: "", elements: [], index: index};
 	}
 
-	print() {
+	getType(bullet) {
+		console.log(bullet);
+		if(/[\d\w]/.test(bullet)) {
+			return "enumerate";
+		} else if( bullet.test(/-/)) {
+			return "itemize";
+		}
+	}
+
+	toLines(lines = []) {
 		for (const l of this.structure) {
-			if(l) {
-				if (l instanceof MachineFormat) {
-					l.print();
-				}
-				else if ("elements" in l){
-					for (const el of l.elements) {
-						let tabs = Array(l.index).join("\t");
-						console.log(tabs + el.str);
-						if(el.children) {
-							el.children.print();
-						}
+			if (l instanceof MachineFormat) {
+				l.toLines(lines);
+			} else if (typeof l === "string") {
+				lines.push(l.trim());
+			} else if ("elements" in l) {
+				let tabs = Array(l.index).join("\t");
+				let type = this.getType(l.bullet);
+				lines.push(tabs + "\\begin{"+ type + "}");
+				for (const el of l.elements) {
+					lines.push(tabs + "\t\\item " + el.str);
+					if (el.children) {
+						el.children.toLines(lines);
 					}
 				}
-				else {
-					console.log(l);
-				}
+				lines.push(tabs + "\\end{"+ type + "}");
 			}
+
 		}
+		return lines
 	}
 
 	currLen() {
@@ -75,7 +84,7 @@ class MachineFormat {
 	}
 
 	addSubList(mf) {
-		if(this.currLen() > 0) {
+		if (this.currLen() > 0) {
 			this.arr.elements[this.currLen() - 1].children = mf;
 		} else {
 			this.structure.push(mf);
@@ -95,7 +104,7 @@ class MachineFormat {
 	}
 
 	resetArr() {
-		if(this.currLen() > 0) {
+		if (this.currLen() > 0) {
 			this.structure.push(this.arr);
 			this.arr = {bullet: "", elements: [], index: -1};
 		}
@@ -111,7 +120,7 @@ class MachineFormat {
 		this.structure.unshift({
 			bullet: bullet,
 			index: index,
-			elements:arr
+			elements: arr
 		})
 	}
 }
